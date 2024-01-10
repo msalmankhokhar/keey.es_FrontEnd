@@ -207,7 +207,9 @@ let continueBtn = document.getElementById("continueBtn")
 continueBtn.addEventListener("click", (e)=>{
   let name = input.value;
   if (suggestions.includes(name)){
-    gotoSwInfoPage(id_dict[name][0]);
+    let software_ID = id_dict[name][0]
+    loadPage(`item/${software_ID}`)
+    // gotoSwInfoPage();
   }
 })
 
