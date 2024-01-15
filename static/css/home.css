@@ -30,7 +30,7 @@ body{
     min-height: 60vh;
     border-radius: 0px 0px 10px 10px;
     display: flex;
-    /* flex-direction: column; */
+    flex-direction: column;
     flex-wrap: wrap;
     justify-content: space-between;
     justify-content: center;

@@ -136,10 +136,10 @@
 
   <div id="contentWrapper">
     
-      <p class="sideItem"><strong>Keey.es</strong> is provides you the genuine activation keys of popular paid softwares. We have an ever growing database. Search now what you are looking for</p>
+      <p class="sideItem text-center" id="firstP"><strong>Keey.es</strong> is provides you the genuine activation keys of popular paid softwares. We have an ever growing database. Search now what you are looking for</p>
 
         <div id="formWrapper" class="sideItem">
-            <label class="" for="searchInput">Search for any software eg; MS Office, Adobe PhotoShop etc.</label>
+            <label class="text-center" for="searchInput">Search for any software eg; MS Office, Adobe PhotoShop etc.</label>
             <div class="searchInput">
                 <input type="text" placeholder="Search">
                 <!-- <i class="fa-solid fa-xmark"></i> -->
@@ -208,7 +208,8 @@ continueBtn.addEventListener("click", (e)=>{
   let name = input.value;
   if (suggestions.includes(name)){
     let software_ID = id_dict[name][0]
-    loadPage(`item/${software_ID}`)
+    let type = id_dict[name][2]
+    loadPage(`item/${type}/${software_ID}`)
     // gotoSwInfoPage();
   }
 })
