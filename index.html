@@ -308,6 +308,7 @@ function showVersionSelector(){
         option.innerText = platform;          
         select.appendChild(option)
       });
+<<<<<<< HEAD
         select.addEventListener("change", (e)=>{
         let selected_platform;
           if (select.value != "none") {
@@ -387,6 +388,35 @@ function showVersionSelector(){
           } else {
                 continueBtn.style.display = "none";
                 
+=======
+      select.addEventListener("change", (e)=>{
+        if (select.value != "none") {
+          let selcted_version = select.value;
+          let platform = select.selectedOptions[0].getAttribute("platform");
+          continueBtn.addEventListener("click", (e)=>{
+            let keysAvailable = false;
+            let cracksAvailable = false;
+            if (type == "Software") {
+              let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+              let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+              console.log(keysDict);
+              console.log(crackslist);
+              if (Object.keys(keysDict).includes("Windows")) {
+                keysAvailable = true;
+              }
+              if (crackslist.includes("Windows")) {
+                cracksAvailable = true;
+              }
+              if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
+                if (keysAvailable) {
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Key/${selcted_version}`);         
+                } else {
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Crack/${selcted_version}`);         
+                }       
+              }
+              else{
+                loadPage(`choose/${type}/Windows/${software_ID}/${selcted_version}`);
+>>>>>>> 60419ca740e57b587ca1c3837b90f457f7165344
               }
             })
             document.getElementById("searchDiv").parentElement.insertBefore(version_select, document.getElementById("searchDiv").nextSibling.nextSibling);
@@ -395,6 +425,7 @@ function showVersionSelector(){
             if (select.nextElementSibling) {
               select.parentElement.removeChild(select.nextElementSibling);
             }
+<<<<<<< HEAD
           }
         })
         // document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
@@ -426,6 +457,17 @@ function showVersionSelector(){
               let keysAvailable = false;
               let cracksAvailable = false;
               if (type == "Software") {
+=======
+            else{
+              let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
+              console.log("platforms available for this game is")
+              console.log(platforms_available)
+              console.log(`length of platforms available is ${platforms_available.length}`)
+              if (platforms_available.length > 1 && false) {
+                loadPage(`item/${type}/${software_ID}/${selcted_version}`);
+              } else {
+                // let platform = platforms_available[0];
+>>>>>>> 60419ca740e57b587ca1c3837b90f457f7165344
                 let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
                 let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
                 console.log(keysDict);
