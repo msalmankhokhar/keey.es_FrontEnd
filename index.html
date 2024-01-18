@@ -330,13 +330,13 @@ function showVersionSelector(){
               }
               if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
                 if (keysAvailable) {
-                  loadPage(`/get_key/${type}/Windows/${software_ID}/Key`);         
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Key/${selcted_version}`);         
                 } else {
-                  loadPage(`/get_key/${type}/Windows/${software_ID}/Crack`);         
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Crack/${selcted_version}`);         
                 }       
               }
               else{
-                loadPage(`choose/${type}/Windows/${software_ID}`);
+                loadPage(`choose/${type}/Windows/${software_ID}/${selcted_version}`);
               }
             }
             else{
@@ -345,7 +345,7 @@ function showVersionSelector(){
               console.log(platforms_available)
               console.log(`length of platforms available is ${platforms_available.length}`)
               if (platforms_available.length > 1 && false) {
-                loadPage(`item/${type}/${software_ID}`);
+                loadPage(`item/${type}/${software_ID}/${selcted_version}`);
               } else {
                 // let platform = platforms_available[0];
                 let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
