@@ -6,7 +6,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
 *{
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  /* font-family: 'Poppins', sans-serif; */
+}
+
+body{
+    height: 100vh;
 }
 
 ::selection{
@@ -17,7 +21,8 @@
 #container{
   /* box-sizing: content-box; */
   max-width: 1200px;
-  margin: 10px auto;
+  margin-top: 10px;
+  /* height: 80vh; */
   
 }
 
@@ -116,7 +121,41 @@ html{
     border: none;
     border-radius: 10px;
     color: white;
+    transition: 0.3s;
+}
+.mybtn:hover{
+    transform: scale(1.05);
+    box-shadow: 2px 2px 10px #939399;
 }
 strong{
     color: var(--main-color);
+}
+footer{
+    background-color: rgb(2 28 132 / 56%);
+    height: 15vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+footer *{
+    color: white;
+    font-size: 0.8rem;
+}
+#footerContent{
+    display: flex;
+    flex-direction: row;
+    row-gap: 5px;
+    column-gap: 25px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.footerLink{
+    text-decoration: none;
+}
+.footerLink:hover{
+    text-decoration: underline;
+}
+#CR{
+    
 }

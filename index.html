@@ -31,8 +31,8 @@
 
 #container{
   /* box-sizing: content-box; */
-  max-width: 1200px;
-  margin: 10px auto;
+  /* max-width: 1200px; */
+  /* margin-top: 10px; */
   
 }
 
@@ -136,11 +136,11 @@
 
   <div id="contentWrapper">
     
-      <p class="sideItem text-center" id="firstP"><strong>Keey.es</strong> is provides you the genuine activation keys of popular paid softwares. We have an ever growing database. Search now what you are looking for</p>
+      <p class="sideItem text-center" id="firstP"><strong>Keey.es</strong> provides you the genuine activation keys of popular paid softwares. We have an ever growing database. Search now what you are looking for</p>
 
         <div id="formWrapper" class="sideItem">
-            <label class="text-center" for="searchInput">Search for any software eg; MS Office, Adobe PhotoShop etc.</label>
-            <div class="searchInput">
+            <!-- <label class="text-center" for="searchInput">Search for any software eg; MS Office, Adobe PhotoShop etc.</label> -->
+            <div class="searchInput" id="searchDiv">
                 <input type="text" placeholder="Search">
                 <!-- <i class="fa-solid fa-xmark"></i> -->
                 <div class="resultBox">
@@ -149,14 +149,21 @@
                 <div id="searchIcon" class="icon"><i class="fas fa-search"></i></div>
             </div>
 
-            <button id="continueBtn" class="mybtn animate__animated animate__pulse animate__infinite" style="cursor: pointer;">
+            <button id="continueBtn" class="mybtn" style="cursor: pointer; display: none;">
               Continue
               <i style="margin-left: 30px;" class="fas fa-arrow-right" ></i>
             </button>
           </div>
-    </div>
-    
-</div>
+        </div>
+        
+        <footer>
+          <div id="footerContent">
+            <a href="/Disclaimer/index.html" class="footerLink">Disclaimer</a>
+            <a href="/Contact/index.html" class="footerLink">Contact Us</a>
+          </div>
+          <div id="CR" class="text-center">Keey.es &copy; 2024 - All Rights Reserved</div>
+        </footer>
+      </div>
 </body>
 
 
@@ -204,15 +211,15 @@ const icon = searchInput.querySelector(".icon");
 let linkTag = searchInput.querySelector("a");
 let webLink;
 let continueBtn = document.getElementById("continueBtn")
-continueBtn.addEventListener("click", (e)=>{
-  let name = input.value;
-  if (suggestions.includes(name)){
-    let software_ID = id_dict[name][0]
-    let type = id_dict[name][2]
-    loadPage(`item/${type}/${software_ID}`)
-    // gotoSwInfoPage();
-  }
-})
+// continueBtn.addEventListener("click", (e)=>{
+//   let name = input.value;
+//   if (suggestions.includes(name)){
+//     let software_ID = id_dict[name][0];
+//     let type = id_dict[name][2];
+//     console.log(`type is ${type}`)
+    
+//   }
+// })
 
 // if user press any key and release
 input.onkeyup = (e)=>{
@@ -234,6 +241,10 @@ input.onkeyup = (e)=>{
       searchIcon.innerHTML = `<i class="fa-solid fa-search"></i>`;
       searchIcon.classList.remove("crossIcon");
       searchInput.classList.remove("active"); //hide autocomplete box
+      if (document.getElementById("vSelector")) {
+        document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));        
+      }
+      continueBtn.style.display = "none";
     }
 }
 
@@ -255,14 +266,120 @@ function showSuggestions(list){
             searchIcon.innerHTML = `<i class="fa-solid fa-x"></i>`;
             searchIcon.classList.add("crossIcon");
             searchInput.classList.remove("active");
+
+            // continueBtn.style.display = "block"
+            showVersionSelector();
           })
         });
+}
+
+function showVersionSelector(){
+  let name = input.value;
+  let software_ID = id_dict[name][0];
+  let type = id_dict[name][2];
+  let platforms_List;
+  if (type == "Software") {
+    platforms_List = ["Windows"]
+  } else{
+    platforms_List = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
+  }
+
+  let versionsDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getVersions/${type}/${software_ID}`, "GET"));
+  let select = document.createElement("select");
+  select.setAttribute("id", "vSelector");
+  select.classList.add("form-select", "form-select-lg", "mb-3");
+  select.setAttribute("aria-label", "Large select example");
+  // select.setAttribute("platform", platform);
+  let default_option = document.createElement("option");
+  default_option.selected  = true;
+  default_option.value  = "none";
+  default_option.innerText = `Select a Version`;
+  select.appendChild(default_option);
+  
+  platforms_List.forEach(platform => {   
+    let versionListForPlatform = versionsDict[platform];
+    if (versionListForPlatform.length > 1 || true) {    
+      versionListForPlatform.forEach(version => {
+        let option = document.createElement("option");
+        option.value = version;
+        if (type == "Game") {
+          option.innerText = "Edition " + version + " " + platform;          
+        } else {
+          option.innerText = "Version " + version + " " + platform;          
+        }
+        option.setAttribute("platform", platform);
+        select.appendChild(option)
+      });
+      select.addEventListener("change", (e)=>{
+        if (select.value != "none") {
+          let selcted_version = select.value;
+          let platform = select.selectedOptions[0].getAttribute("platform");
+          continueBtn.addEventListener("click", (e)=>{
+            let keysAvailable = false;
+            let cracksAvailable = false;
+            if (type == "Software") {
+              let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+              let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+              console.log(keysDict);
+              console.log(crackslist);
+              if (Object.keys(keysDict).includes("Windows")) {
+                keysAvailable = true;
+              }
+              if (crackslist.includes("Windows")) {
+                cracksAvailable = true;
+              }
+              if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
+                if (keysAvailable) {
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Key`);         
+                } else {
+                  loadPage(`/get_key/${type}/Windows/${software_ID}/Crack`);         
+                }       
+              }
+              else{
+                loadPage(`choose/${type}/Windows/${software_ID}`);
+              }
+            }
+            else{
+              let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
+              console.log("platforms available for this game is")
+              console.log(platforms_available)
+              console.log(`length of platforms available is ${platforms_available.length}`)
+              if (platforms_available.length > 1 && false) {
+                loadPage(`item/${type}/${software_ID}`);
+              } else {
+                // let platform = platforms_available[0];
+                let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+                let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+                if (Object.keys(keysDict).includes(platform) && crackslist.includes(platform)) {
+                  loadPage(`choose/${type}/${platform}/${software_ID}/${selcted_version}`);         
+                } else {
+                  if (crackslist.includes(platform)) {
+                    loadPage(`get_key/${type}/${platform}/${software_ID}/Crack/${selcted_version}`);            
+                  } else {
+                    loadPage(`get_key/${type}/${platform}/${software_ID}/Key/${selcted_version}`);                        
+                  }
+                }
+
+              }
+            }
+                  })
+          continueBtn.style.display = "block";
+        }
+        else{
+          continueBtn.style.display = "none";
+        }
+      })
+    }
+    document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
+  });
 }
 
 searchIcon.addEventListener("click", (e)=>{
   input.value = "";
   searchIcon.classList.remove("crossIcon");
   searchIcon.innerHTML = `<i class="fa-solid fa-search"></i>`;
+  document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));
+  continueBtn.style.display = "none";
 })
 </script>
 
