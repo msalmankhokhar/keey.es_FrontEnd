@@ -286,93 +286,203 @@ function showVersionSelector(){
 
   let versionsDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getVersions/${type}/${software_ID}`, "GET"));
   let select = document.createElement("select");
-  select.setAttribute("id", "vSelector");
+  if (type == "Game") {
+    select.setAttribute("id", "pSelector"); 
+  } else {
+    select.setAttribute("id", "vSelector"); 
+    
+  }
   select.classList.add("form-select", "form-select-lg", "mb-3");
   select.setAttribute("aria-label", "Large select example");
   // select.setAttribute("platform", platform);
   let default_option = document.createElement("option");
   default_option.selected  = true;
   default_option.value  = "none";
-  default_option.innerText = `Select a Version`;
+  default_option.innerText = `Select a Platform`;
   select.appendChild(default_option);
-  
-  platforms_List.forEach(platform => {   
-    let versionListForPlatform = versionsDict[platform];
-    if (versionListForPlatform.length > 1 || true) {    
-      versionListForPlatform.forEach(version => {
+  if (type == "Game") {
+    platforms_List.forEach(platform => {
+      // if (platforms_List.length > 1 || true) {
         let option = document.createElement("option");
-        option.value = version;
-        if (type == "Game") {
-          option.innerText = "Edition " + version + " " + platform;          
-        } else {
-          option.innerText = "Version " + version + " " + platform;          
-        }
-        option.setAttribute("platform", platform);
+        option.value = platform;
+        option.innerText = platform;          
         select.appendChild(option)
       });
-      select.addEventListener("change", (e)=>{
-        if (select.value != "none") {
-          let selcted_version = select.value;
-          let platform = select.selectedOptions[0].getAttribute("platform");
-          continueBtn.addEventListener("click", (e)=>{
-            let keysAvailable = false;
-            let cracksAvailable = false;
-            if (type == "Software") {
-              let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
-              let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
-              console.log(keysDict);
-              console.log(crackslist);
-              if (Object.keys(keysDict).includes("Windows")) {
-                keysAvailable = true;
+        select.addEventListener("change", (e)=>{
+        let selected_platform;
+          if (select.value != "none") {
+            selected_platform = select.value
+            let version_select = document.createElement("select");
+            version_select.setAttribute("id", "vSelector");
+            version_select.classList.add("form-select", "form-select-lg", "mb-3");
+            version_select.setAttribute("aria-label", "Large select example");
+            version_select.setAttribute("platform", selected_platform);
+            let default_option = document.createElement("option");
+            default_option.selected  = true;
+            default_option.value  = "none";
+            default_option.innerText = `Select an Edition`;
+            version_select.appendChild(default_option);
+            let versionsDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getVersions/${type}/${software_ID}`, "GET"));
+            let versionsList = versionsDict[selected_platform];
+            versionsList.forEach(version => {
+              let option = document.createElement("option");
+              option.value = version;
+              option.innerText = version;
+              version_select.appendChild(option);
+            });
+            version_select.addEventListener("change", (e)=>{
+              if (version_select.value != "none") {
+                let selcted_version = version_select.value;
+                let platform = version_select.selectedOptions[0].getAttribute("platform");
+                continueBtn.addEventListener("click", (e)=>{
+                  let keysAvailable = false;
+                  let cracksAvailable = false;
+                  if (type == "Software") {
+                    let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+                    let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+                    console.log(keysDict);
+                    console.log(crackslist);
+                    if (Object.keys(keysDict).includes(selected_platform)) {
+                      keysAvailable = true;
+                    }
+                    if (crackslist.includes(selected_platform)) {
+                      cracksAvailable = true;
+                    }
+                    if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
+                      if (keysAvailable) {
+                        loadPage(`/get_key/${type}/${selected_platform}/${software_ID}/Key/${selcted_version}`);         
+                      } else {
+                        loadPage(`/get_key/${type}/${selected_platform}/${software_ID}/Crack/${selcted_version}`);         
+                      }       
+                    }
+                    else{
+                      loadPage(`choose/${type}/${selected_platform}/${software_ID}`);
+                    }
+                  }
+                  else{
+                    let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
+                    console.log("platforms available for this game is")
+                    console.log(platforms_available)
+                    console.log(`length of platforms available is ${platforms_available.length}`)
+                    if (platforms_available.length > 1 && false) {
+                      loadPage(`item/${type}/${software_ID}`);
+                    } else {
+                      // let platform = platforms_available[0];
+                      let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+                      let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+                      if (Object.keys(keysDict).includes(selected_platform) && crackslist.includes(selected_platform)) {
+                        loadPage(`choose/${type}/${selected_platform}/${software_ID}/${selcted_version}`);         
+                      } else {
+                        if (crackslist.includes(selected_platform)) {
+                          loadPage(`get_key/${type}/${selected_platform}/${software_ID}/Crack/${selcted_version}`);            
+                        } else {
+                          loadPage(`get_key/${type}/${selected_platform}/${software_ID}/Key/${selcted_version}`);                        
+                        }
+                      }
+      
+                    }
+                  }
+                        })
+                continueBtn.style.display = "block";
+          } else {
+                continueBtn.style.display = "none";
+                
               }
-              if (crackslist.includes("Windows")) {
-                cracksAvailable = true;
-              }
-              if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
-                if (keysAvailable) {
-                  loadPage(`/get_key/${type}/Windows/${software_ID}/Key`);         
-                } else {
-                  loadPage(`/get_key/${type}/Windows/${software_ID}/Crack`);         
-                }       
-              }
-              else{
-                loadPage(`choose/${type}/Windows/${software_ID}`);
-              }
+            })
+            document.getElementById("searchDiv").parentElement.insertBefore(version_select, document.getElementById("searchDiv").nextSibling.nextSibling);
+            // document.getElementById("continueBtn").insertAdjacentElement("beforeend", version_select);
+          } else {
+            if (select.nextElementSibling) {
+              select.parentElement.removeChild(select.nextElementSibling);
             }
-            else{
-              let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
-              console.log("platforms available for this game is")
-              console.log(platforms_available)
-              console.log(`length of platforms available is ${platforms_available.length}`)
-              if (platforms_available.length > 1 && false) {
-                loadPage(`item/${type}/${software_ID}`);
-              } else {
-                // let platform = platforms_available[0];
+          }
+        })
+        // document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
+      // } else {
+      //   let platform = platforms_List[0];      
+      // }
+    // });
+    document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
+  } else {
+    platforms_List.forEach(platform => {   
+      let versionListForPlatform = versionsDict[platform];
+      if (versionListForPlatform.length > 1 || true) {    
+        versionListForPlatform.forEach(version => {
+          let option = document.createElement("option");
+          option.value = version;
+          if (type == "Game") {
+            option.innerText = "Edition " + version + " " + platform;          
+          } else {
+            option.innerText = "Version " + version + " " + platform;          
+          }
+          option.setAttribute("platform", platform);
+          select.appendChild(option)
+        });
+        select.addEventListener("change", (e)=>{
+          if (select.value != "none") {
+            let selcted_version = select.value;
+            let platform = select.selectedOptions[0].getAttribute("platform");
+            continueBtn.addEventListener("click", (e)=>{
+              let keysAvailable = false;
+              let cracksAvailable = false;
+              if (type == "Software") {
                 let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
                 let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
-                if (Object.keys(keysDict).includes(platform) && crackslist.includes(platform)) {
-                  loadPage(`choose/${type}/${platform}/${software_ID}/${selcted_version}`);         
-                } else {
-                  if (crackslist.includes(platform)) {
-                    loadPage(`get_key/${type}/${platform}/${software_ID}/Crack/${selcted_version}`);            
-                  } else {
-                    loadPage(`get_key/${type}/${platform}/${software_ID}/Key/${selcted_version}`);                        
-                  }
+                console.log(keysDict);
+                console.log(crackslist);
+                if (Object.keys(keysDict).includes("Windows")) {
+                  keysAvailable = true;
                 }
-
+                if (crackslist.includes("Windows")) {
+                  cracksAvailable = true;
+                }
+                if (keysAvailable && !cracksAvailable || cracksAvailable && !keysAvailable) {
+                  if (keysAvailable) {
+                    loadPage(`/get_key/${type}/Windows/${software_ID}/Key`);         
+                  } else {
+                    loadPage(`/get_key/${type}/Windows/${software_ID}/Crack`);         
+                  }       
+                }
+                else{
+                  loadPage(`choose/${type}/Windows/${software_ID}`);
+                }
               }
-            }
-                  })
-          continueBtn.style.display = "block";
-        }
-        else{
-          continueBtn.style.display = "none";
-        }
-      })
-    }
-    document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
-  });
-}
+              else{
+                let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
+                console.log("platforms available for this game is")
+                console.log(platforms_available)
+                console.log(`length of platforms available is ${platforms_available.length}`)
+                if (platforms_available.length > 1 && false) {
+                  loadPage(`item/${type}/${software_ID}`);
+                } else {
+                  // let platform = platforms_available[0];
+                  let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+                  let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+                  if (Object.keys(keysDict).includes(platform) && crackslist.includes(platform)) {
+                    loadPage(`choose/${type}/${platform}/${software_ID}/${selcted_version}`);         
+                  } else {
+                    if (crackslist.includes(platform)) {
+                      loadPage(`get_key/${type}/${platform}/${software_ID}/Crack/${selcted_version}`);            
+                    } else {
+                      loadPage(`get_key/${type}/${platform}/${software_ID}/Key/${selcted_version}`);                        
+                    }
+                  }
+  
+                }
+              }
+                    })
+            continueBtn.style.display = "block";
+          }
+          else{
+            continueBtn.style.display = "none";
+          }
+        })
+      }
+      document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
+    });
+  }
+    
+  }
 
 searchIcon.addEventListener("click", (e)=>{
   input.value = "";
