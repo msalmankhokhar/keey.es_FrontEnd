@@ -244,6 +244,9 @@ input.onkeyup = (e)=>{
       if (document.getElementById("vSelector")) {
         document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));        
       }
+      if (document.getElementById("pSelector")) {    
+        document.getElementById("formWrapper").removeChild(document.getElementById("pSelector"));
+      }
       continueBtn.style.display = "none";
     }
 }
@@ -494,6 +497,9 @@ searchIcon.addEventListener("click", (e)=>{
   searchIcon.classList.remove("crossIcon");
   searchIcon.innerHTML = `<i class="fa-solid fa-search"></i>`;
   document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));
+  if (document.getElementById("pSelector")) {    
+    document.getElementById("formWrapper").removeChild(document.getElementById("pSelector"));
+  }
   continueBtn.style.display = "none";
 })
 </script>
