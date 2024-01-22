@@ -11,6 +11,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="static/css/bg.css">
+    <!-- <link rel="stylesheet" href="static/css/comman.css"> -->
     <link rel="stylesheet" href="static/css/comman2.css">
     <link rel="stylesheet" href="static/css/home.css">
 </head>
@@ -126,6 +127,17 @@
     <div class="wave"></div>
  </div>
 
+ <!-- <div id="toast" class="toast show" data-aos="fade-down" role="alert" aria-live="assertive" aria-atomic="true">
+  <div style="display: flex; align-items: center;" class="toast-header">
+    <img src="https://image.similarpng.com/very-thumbnail/2020/08/Illustration-of-light-bulb-icon-on-transparent-background-PNG.png" class="rounded me-2" alt="icon" width="20">
+    <strong class="me-auto">Notification</strong>
+    <small>11 mins ago</small>
+  </div>
+  <div class="toast-body">
+    This is a notification
+  </div>
+</div>  -->
+
 <div class="container" id="container">
 
   
@@ -158,8 +170,8 @@
         
         <footer>
           <div id="footerContent">
-            <a href="/Disclaimer/index.html" class="footerLink">Disclaimer</a>
-            <a href="/Contact/index.html" class="footerLink">Contact Us</a>
+            <a href="/Disclaimer" class="footerLink" target="_blank">Disclaimer</a>
+            <a href="/Contact" class="footerLink" target="_blank">Contact Us</a>
           </div>
           <div id="CR" class="text-center">Keey.es &copy; 2024 - All Rights Reserved</div>
         </footer>
@@ -275,6 +287,8 @@ function showSuggestions(list){
           })
         });
 }
+
+
 
 function showVersionSelector(){
   let name = input.value;
@@ -502,6 +516,50 @@ searchIcon.addEventListener("click", (e)=>{
   }
   continueBtn.style.display = "none";
 })
+</script>
+
+<script>
+// let suggestions = fetchAsync_json(`${API_LINK}/api/suggestions`, "GET");
+function showToast(sw_name) {
+  let name;
+  if (sw_name) {
+    name = sw_name
+  } else {
+    let index = Math.floor(Math.random() * suggestions.length);
+    name = suggestions[index];
+  }
+  
+  let software_ID = id_dict[name][0];
+  let type = id_dict[name][2];
+  let msgList = [ "Key", "Download link" ]
+  let toast = document.createElement("div");
+  
+  toast.setAttribute("id", "toast")
+  toast.setAttribute("data-aos", "fade-down")
+  toast.setAttribute("role", "alert")
+  toast.setAttribute("aria-live", "assertive")
+  toast.setAttribute("aria-atomic", true)
+ 
+  toast.classList.add("toast", "show")
+  toast.innerHTML = `
+  <div style="display: flex; align-items: center;" class="toast-header">
+    <img src="https://image.similarpng.com/very-thumbnail/2020/08/Illustration-of-light-bulb-icon-on-transparent-background-PNG.png" class="rounded me-2" alt="icon" width="20">
+    <strong class="me-auto">Notification</strong>
+    <small>${Math.floor(Math.random() * 15)} mins ago</small>
+  </div>
+  <div class="toast-body">
+    Someone generated ${msgList[Math.floor(Math.random() * msgList.length)]} for <strong>${name}</strong>
+  </div>
+  `
+  // `id="toast" class="toast show" data-aos="fade-down" role="alert" aria-live="assertive" aria-atomic="true"`
+  // clearInterval(toastInterval);
+  document.body.appendChild(toast)
+  setTimeout(() => {
+    document.body.removeChild(toast);
+  }, 5000);
+}
+
+let toastInterval = setInterval(showToast, 10000);
 </script>
 
 <!-- <script src="/static/js/script.js"></script> -->
