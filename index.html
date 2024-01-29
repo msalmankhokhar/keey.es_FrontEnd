@@ -444,7 +444,7 @@ function showVersionSelector(){
   } else {
     platforms_List.forEach(platform => {   
       let versionListForPlatform = versionsDict[platform];
-      if (versionListForPlatform.length > 1 || true) {    
+      if (versionListForPlatform) {    
         versionListForPlatform.forEach(version => {
           let option = document.createElement("option");
           option.value = version;
@@ -463,7 +463,7 @@ function showVersionSelector(){
             continueBtn.addEventListener("click", (e)=>{
               let keysAvailable = false;
               let cracksAvailable = false;
-              if (type == "Software") {
+          
                 let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
                 let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
                 console.log(keysDict);
@@ -484,30 +484,7 @@ function showVersionSelector(){
                 else{
                   loadPage(`choose/${type}/Windows/${software_ID}/${selcted_version}`);
                 }
-              }
-              else{
-                let platforms_available = JSON.parse(fetchAsync_json(`${API_LINK}/api/getPlatforms/${type}/${software_ID}`, "GET"));
-                console.log("platforms available for this game is")
-                console.log(platforms_available)
-                console.log(`length of platforms available is ${platforms_available.length}`)
-                if (platforms_available.length > 1 && false) {
-                  loadPage(`item/${type}/${software_ID}/${selcted_version}`);
-                } else {
-                  // let platform = platforms_available[0];
-                  let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
-                  let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
-                  if (Object.keys(keysDict).includes(platform) && crackslist.includes(platform)) {
-                    loadPage(`choose/${type}/${platform}/${software_ID}/${selcted_version}`);         
-                  } else {
-                    if (crackslist.includes(platform)) {
-                      loadPage(`get_key/${type}/${platform}/${software_ID}/Crack/${selcted_version}`);            
-                    } else {
-                      loadPage(`get_key/${type}/${platform}/${software_ID}/Key/${selcted_version}`);                        
-                    }
-                  }
-  
-                }
-              }
+              
                     })
             continueBtn.style.display = "block";
           }
@@ -515,6 +492,39 @@ function showVersionSelector(){
             continueBtn.style.display = "none";
           }
         })
+      }
+      else{
+        select.style.display = "none";
+        continueBtn.addEventListener("click", (e)=>{
+              let keysAvailable = false;
+              let cracksAvailable = false;
+          
+                let keysDict = JSON.parse(fetchAsync_json(`${API_LINK}/api/getKeys/${type}/${software_ID}`, "GET"));
+                let crackslist = JSON.parse(fetchAsync_json(`${API_LINK}/api/getCracks/${type}/${software_ID}`, "GET"));
+                console.log(keysDict);
+                console.log(crackslist);
+                if (Object.keys(keysDict).includes("Windows")) {
+                  keysAvailable = true;
+                }
+                if (crackslist.includes("Windows")) {
+                  cracksAvailable = true;
+                }
+                if (keysAvailable && cracksAvailable) {
+                  loadPage(`choose/${type}/Windows/${software_ID}/none`);
+                }
+                else if(keysAvailable || cracksAvailable){
+                  if (keysAvailable) {
+                    loadPage(`/get_key/${type}/Windows/${software_ID}/Key/none`);         
+                  } else {
+                    loadPage(`/get_key/${type}/Windows/${software_ID}/Crack/none`);         
+                  }       
+
+                }
+                else{
+                  document.write("No key or crack available for this software")
+                }             
+                    })
+        continueBtn.style.display = "block"
       }
       document.getElementById("searchDiv").parentElement.insertBefore(select, document.getElementById("searchDiv").nextSibling);
     });
@@ -526,11 +536,13 @@ searchIcon.addEventListener("click", (e)=>{
   input.value = "";
   searchIcon.classList.remove("crossIcon");
   searchIcon.innerHTML = `<i class="fa-solid fa-search"></i>`;
-  document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));
+  continueBtn.style.display = "none";
+  if (document.getElementById("vSelector")) {    
+    document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));
+  }
   if (document.getElementById("pSelector")) {    
     document.getElementById("formWrapper").removeChild(document.getElementById("pSelector"));
   }
-  continueBtn.style.display = "none";
 })
 </script>
 
