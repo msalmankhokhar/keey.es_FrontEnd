@@ -1,10 +1,3 @@
-// let API_LINK = "https://24c8a219efe286ead244b913a66b6d43.serveo.net";
-// let API_LINK = "https://ce3e-13-56-230-83.ngrok-free.app";
-// let API_LINK = "http://ec2-13-56-230-83.us-west-1.compute.amazonaws.com";
-// let API_LINK = "http://localhost:5000";
-// let API_LINK = "http://127.0.0.1:5000";
-// let API_LINK = "http://192.168.100.101:5000";
-// let API_LINK = "https://a1f9-103-82-122-32.ngrok-free.app";
 let API_LINK = "https://keeyz.site";
 
 function hideProductKey(key) {
