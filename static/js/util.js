@@ -1,4 +1,6 @@
-let API_LINK = "https://keeyz.site";
+let API_LINK;
+API_LINK = "https://keeyz.site";
+// API_LINK = "http://localhost:5000";
 
 function hideProductKey(key) {
   // Find the last dash in the key

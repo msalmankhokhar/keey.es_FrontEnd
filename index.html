@@ -132,7 +132,7 @@
 
         <div id="formWrapper" class="sideItem">
             <div class="searchInput" id="searchDiv">
-                <input type="text" placeholder="search anything...">
+                <input type="text" placeholder="Search here">
                 <!-- <i class="fa-solid fa-xmark"></i> -->
                 <div class="resultBox">
                     <!-- here list are inserted from javascript -->
@@ -428,7 +428,7 @@
             if (type == "Game") {
               option.innerText = "Edition " + version + " " + platform;          
             } else {
-              option.innerText = "Version " + version + " " + platform;          
+              option.innerText = "Version " + version;          
             }
             option.setAttribute("platform", platform);
             select.appendChild(option)
@@ -556,11 +556,13 @@
       Someone generated a <strong>${msgList[Math.floor(Math.random() * msgList.length)]}</strong> for <strong>${name}</strong>
     </div>
     `
-    // `id="toast" class="toast show" data-aos="fade-down" role="alert" aria-live="assertive" aria-atomic="true"`
-    // clearInterval(toastInterval);
     document.body.appendChild(toast)
     setTimeout(() => {
       document.body.removeChild(toast);
+      if (toastInterval) {
+        clearInterval(toastInterval);
+      }
+      setInterval(showToast, 15000);
     }, 5000);
   }
 
