@@ -540,7 +540,7 @@
     let toast = document.createElement("div");
     
     toast.setAttribute("id", "toast")
-    toast.setAttribute("data-aos", "fade-down")
+    // toast.setAttribute("data-aos", "fade-down")
     toast.setAttribute("role", "alert")
     toast.setAttribute("aria-live", "assertive")
     toast.setAttribute("aria-atomic", true)
@@ -557,16 +557,17 @@
     </div>
     `
     document.body.appendChild(toast)
+    console.log("toast added")
     setTimeout(() => {
-      document.body.removeChild(toast);
-      if (toastInterval) {
-        clearInterval(toastInterval);
-      }
-      setInterval(showToast, 15000);
+      try {
+            document.body.removeChild(toast);           
+        } catch (error) {
+            
+        }
     }, 5000);
   }
 
-  let toastInterval = setInterval(showToast, 15000);
+  let toastInterval = setInterval(showToast, 10000);
   </script>
 
 </html>
