@@ -245,6 +245,13 @@
       let listData;
       console.log("inside small func");
       if(!list.length){
+        if (document.getElementById("vSelector")) {
+          document.getElementById("formWrapper").removeChild(document.getElementById("vSelector"));        
+        }
+        if (document.getElementById("pSelector")) {    
+          document.getElementById("formWrapper").removeChild(document.getElementById("pSelector"));
+        }
+        continueBtn.style.display = "none";
           userValue = input.value;
           listData = '<li class="sugg-li">'+ userValue +'</li>';
       }else{
@@ -293,7 +300,11 @@
     let default_option = document.createElement("option");
     default_option.selected  = true;
     default_option.value  = "none";
-    default_option.innerText = `Select a Platform`;
+    if (type == "Game") {     
+      default_option.innerText = `Select a Platform`;
+    } else {
+      default_option.innerText = `Select a Version`;     
+    }
     select.appendChild(default_option);
     if (type == "Game") {
       platforms_List.forEach(platform => {
